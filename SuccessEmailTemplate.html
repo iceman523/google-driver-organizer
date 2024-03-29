@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f3f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      margin-top: 25px;
+    }
+
+    .header {
+      background-color: #4A90E2;
+      color: white;
+      padding: 20px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .sub-header {
+      color: white;
+      font-size: 18px;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .file-detail {
+      border: 1px solid #e1e4e8;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background-color: #f9fafb;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* This targets the first .file-detail following the .header */
+    .header+.file-detail {
+      margin-top: 15px;
+      /* Adjust this value to increase or decrease the space */
+    }
+
+
+    .file-name {
+      flex-grow: 1;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background-color: white;
+      color: #4A90E2;
+      padding: 10px 20px;
+      margin: 20px 0;
+      border: 2px solid #4A90E2;
+      border-radius: 25px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .cta-button:hover {
+      background-color: #4A90E2;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      Drive Cleanup Report
+      <div class="sub-header">
+        <?= moved ?> files have been moved from the root folder
+      </div>
+    </div>
+    <!-- The loop starts from the first file detail -->
+    <? for (const detail of details) { ?>
+    <div class="file-detail">
+      <div></div>
+      <div class="file-name">
+        <?= detail ?>
+      </div>
+    </div>
+    <? } ?>
+    <a href="https://drive.google.com/drive/my-drive" class="cta-button">Go to My Drive</a>
+  </div>
+</body>
+
+</html>
