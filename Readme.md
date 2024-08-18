@@ -24,7 +24,7 @@ This is a Google Apps Script designed to automate the organization of files with
 - `FileUtilities.gs`: Contains utilities for file handling.
 - `EmailNotifications.gs`: Manages sending email notifications about the cleanup process.
 - `SuccessEmailTemplate.html`: HTML template for the email notification.
-- `MimeTypeMappings.js`: Mapping custom names for the folders based on mime types.
+- `MimeTypeMappings.gs`: Mapping custom names for the folders based on mime types.
 
 ## License
 
