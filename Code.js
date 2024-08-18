@@ -16,54 +16,48 @@ function CleanUpRootDrive() {
   let folderNameMap = {};
   while (folders.hasNext()) {
     const folder = folders.next();
-    folderNameMap[folder.getName()] = folder;
+    folderNameMap[folder.getName().toLowerCase()] = folder; // Key is lowercase for matching
   }
 
   let moved = 0;
   let details = [];
   while (rootFiles.hasNext()) {
-    // Check if the script is close to the time limit
-    if (new Date().getTime() - startTime > 280000) { // 280 seconds = 4 minutes 40 seconds
-      // Save the continuation token for the next trigger execution
+    if (new Date().getTime() - startTime > 280000) { // Check time limit
       scriptProperties.setProperty('CONTINUATION_TOKEN', rootFiles.getContinuationToken());
       console.log("Time limit approaching, process will continue on next trigger.");
+      if (moved > 0) { // Send notification if any files have been moved in this execution
+        notify(moved, details);
+      }
       return; // Exit the function
     }
 
     const file = rootFiles.next();
-    let ext = getExtension(file);
+    let folderName = getFolderNameForFile(file);
 
-    let folder = folderNameMap[ext];
+    // Later, when checking for existing folders:
+    let folder = folderNameMap[folderName.toLowerCase()];
     if (!folder) {
-      folder = rootFolder.createFolder(ext);
-      folderNameMap[ext] = folder;
+      // Create folder only if necessary
+      folder = rootFolder.createFolder(folderName); // Use the capitalized name for creation
+      folderNameMap[folderName.toLowerCase()] = folder;
     }
 
     if (file.getAccess(Session.getActiveUser()) === DriveApp.Permission.VIEW || file.getAccess(Session.getActiveUser()) === DriveApp.Permission.COMMENT) {
-      console.log(`Skipping file "${file.getName()}": insufficient permissions.`);
-      continue;
+      continue; // Skip without logging for efficiency
     }
 
     file.moveTo(folder);
-    details.push(`"${file.getName()}" moved to folder "${ext}".`);
+    details.push(`"${file.getName()}" moved to folder "${folderName}".`);
     moved++;
   }
 
-  // If the loop ends without timing out, it means all files have been processed
-  // Notify about the moved files if any
+  // Clean up and notifications
   if (moved > 0) {
     notify(moved, details);
     console.log(`${moved} files were successfully moved. Notification sent.`);
   }
-
-  // If there are no more files and the continuation token is set, it's the end of the process
-  if (!rootFiles.hasNext() && continuationToken) {
-    scriptProperties.deleteProperty('CONTINUATION_TOKEN');
-    console.log("All files have been moved. Process completed.");
-  }
-
-  // If there are no files moved and no continuation token, no further action is required
-  if (moved === 0 && !continuationToken) {
-    console.log("No files were moved. Process completed or will continue on next trigger.");
+  if (!rootFiles.hasNext()) {
+    scriptProperties.deleteProperty('CONTINUATION_TOKEN'); // Clean up continuation token if done
+    console.log("All files have been moved or processed. Process completed.");
   }
 }
